@@ -1,12 +1,20 @@
-# Define here the models for your scraped items
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/items.html
-
-import scrapy
+from dataclasses import dataclass, asdict
 
 
-class AlkotekaItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+@dataclass
+class ProductItem:
+    timestamp: int
+    RPC: str
+    url: str
+    title: str
+    marketing_tags: str
+    brand: str
+    section: list[str]
+    price_data: dict[str, float | str]
+    stock: dict[str, bool | int]
+    assets: dict[str, str | list[str]]
+    metadata: dict[str, str]
+    variants: int
+    
+    def dict(self):
+        return asdict(self)

@@ -1,6 +1,8 @@
-from alkoteka.data import Product
-from datetime import datetime
+import re
 from abc import ABC, abstractmethod
+from datetime import datetime
+
+from alkoteka.items import ProductItem
 
 
 class Parser(ABC):
@@ -11,15 +13,15 @@ class Parser(ABC):
 
 class ProductParser(Parser):
     @abstractmethod
-    def parse(self, product: dict) -> Product:
+    def parse(self, product: dict) -> ProductItem:
         pass
 
 
 class AlkotekaProductParser(ProductParser):
-    def parse(self, product: dict) -> Product:
+    def parse(self, product: dict) -> ProductItem:
         product_catalog = product["product_catalog"]
         product = product["product"]["results"]
-        return Product(
+        return ProductItem(
             timestamp=int(datetime.now().timestamp()),
             RPC=product["uuid"],
             url=product_catalog["product_url"],
@@ -87,6 +89,12 @@ class AlkotekaProductParser(ProductParser):
             for block in product.get("text_blocks", [])
             if block.get("title") == "Описание"
         ).strip()
+        
+        description = re.sub(r'\n', '', description)
+        description = re.sub(r'<br\s*/?>', '. ', description)
+        description = re.sub(r'<[^>]+>', '', description)
+        description = re.sub(r'\s+', ' ', description)
+        description = description.strip().strip(';').strip()
         
         attributes = {}
         for attribute in product.get("description_blocks", []):

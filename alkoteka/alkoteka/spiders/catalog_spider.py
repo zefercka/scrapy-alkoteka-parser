@@ -1,6 +1,6 @@
 import scrapy
-from scrapy.http import Response
 from alkoteka.config import settings
+from scrapy.http import Response
 
 CITY_UUID = settings.city_uuid
 API_BASE_URL = "https://alkoteka.com/web-api/v1/product"
